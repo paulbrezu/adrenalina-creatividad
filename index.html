@@ -21,7 +21,7 @@ body{
 
 .wrap{max-width:980px;margin:22px auto;padding:0 14px}
 
-/* -------- PORTADA -------- */
+/* PORTADA */
 .cover{display:block}
 .coverCard{
   border-radius:var(--radius);
@@ -36,10 +36,12 @@ body{
 .coverImg{
   width:min(520px,100%);
   border-radius:16px;
+  display:block;
 }
 .coverTitle{
   font-weight:900;
   font-size:clamp(28px,5vw,48px);
+  line-height:1.05;
 }
 .coverText{
   max-width:760px;
@@ -58,8 +60,7 @@ body{
 }
 .coverBtn:active{transform:scale(.98)}
 
-/* -------- SELECTOR -------- */
-
+/* SELECTOR */
 .stage{
   position:relative;
   border-radius:var(--radius);
@@ -71,7 +72,10 @@ body{
 
 .stage img{
   width:100%;
+  height:auto;
   display:block;
+  user-select:none;
+  -webkit-user-drag:none;
 }
 
 .overlay{
@@ -89,15 +93,17 @@ body{
   pointer-events:none;
   text-align:center;
   background:linear-gradient(180deg,var(--glass),var(--glass2));
+  border:1px solid rgba(255,255,255,.55);
   border-radius:999px;
   padding:14px 16px;
+  backdrop-filter: blur(6px);
 }
-
 .centerCard .t1{font-weight:750;font-size:clamp(16px,2.4vw,22px)}
-.centerCard .t2{margin-top:4px;font-weight:650;font-size:clamp(14px,2vw,18px)}
+.centerCard .t2{margin-top:4px;font-weight:650;opacity:.85;font-size:clamp(14px,2vw,18px)}
 
 .emojiBtn{
   pointer-events:auto;
+  justify-self:start;
   border:0;
   cursor:pointer;
   background:rgba(255,255,255,.9);
@@ -107,6 +113,8 @@ body{
   display:grid;
   place-items:center;
   font-size:clamp(30px,5vw,52px);
+  line-height:1;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
 .emojiBtn.right{justify-self:end}
 
@@ -124,7 +132,6 @@ body{
 }
 
 .subhint{display:none;margin-top:10px;font-size:14px;opacity:.7}
-.hidden{display:none!important}
 </style>
 </head>
 
@@ -141,44 +148,128 @@ body{
       ya hace unos años que nos conocemos y ya hace que estamos juntos.
       Me haces muy feliz&lt;3
     </div>
-    <button id="openGift" class="coverBtn">Abrir regalo 🎁</button>
+    <button id="openGift" class="coverBtn" type="button">Abrir regalo 🎁</button>
   </div>
 </div>
 
 <!-- SELECTOR -->
 <div id="stage" class="stage">
   <img id="img" src="fondo.png" alt="Selector">
-  <div id="overlay" class="overlay">
-    <button id="btnLeft" class="emojiBtn">💪🏻</button>
 
-    <div class="centerCard">
+  <div id="overlay" class="overlay">
+    <button id="btnLeft" class="emojiBtn" type="button" aria-label="Elegir Adrenalina">💪🏻</button>
+
+    <div class="centerCard" aria-hidden="true">
       <div class="t1">Elige qué opción quieres</div>
       <div class="t2">Adrenalina o Creatividad</div>
     </div>
 
-    <button id="btnRight" class="emojiBtn right">🧠</button>
+    <button id="btnRight" class="emojiBtn right" type="button" aria-label="Elegir Creatividad">🧠</button>
   </div>
 </div>
 
 <div id="toolbar" class="toolbar">
-  <button id="home">Inicio</button>
+  <button id="back" type="button">Volver</button>
+  <button id="home" type="button">Inicio</button>
 </div>
 
 <div id="subhint" class="subhint">
-  Puedes compartir: ?opt=adrenalina o ?opt=creatividad
+  Puedes compartir: <code>?opt=adrenalina</code> o <code>?opt=creatividad</code>
 </div>
 
 </div>
 
 <script>
-const IMGS={
-  home:"fondo.png",
-  adrenalina:"adrenalina.webp",
-  creatividad:"creatividad.jpg"
-};
+document.addEventListener("DOMContentLoaded", () => {
+  const IMGS = {
+    home: "fondo.png",
+    adrenalina: "adrenalina.webp",
+    creatividad: "creatividad.jpg"
+  };
 
-const cover=document.getElementById("cover");
-const stage=document.getElementById("stage
+  const cover   = document.getElementById("cover");
+  const stage   = document.getElementById("stage");
+  const toolbar = document.getElementById("toolbar");
+  const subhint = document.getElementById("subhint");
+  const img     = document.getElementById("img");
 
+  const openGift = document.getElementById("openGift");
+  const btnLeft  = document.getElementById("btnLeft");
+  const btnRight = document.getElementById("btnRight");
+  const back     = document.getElementById("back");
+  const home     = document.getElementById("home");
 
+  function showCover(){
+    cover.style.display = "block";
+    stage.style.display = "none";
+    toolbar.style.display = "none";
+    subhint.style.display = "none";
+    // Limpia parámetro
+    const url = new URL(window.location);
+    url.searchParams.delete("opt");
+    window.history.replaceState({}, "", url);
+  }
 
+  function showSelector(){
+    cover.style.display = "none";
+    stage.style.display = "block";
+    toolbar.style.display = "flex";
+    subhint.style.display = "block";
+    img.src = IMGS.home;
+  }
+
+  // Portada -> selector
+  openGift.addEventListener("click", () => {
+    showSelector();
+  });
+
+  // Elegir
+  btnLeft.addEventListener("click", () => {
+    img.src = IMGS.adrenalina;
+    const url = new URL(window.location);
+    url.searchParams.set("opt", "adrenalina");
+    window.history.replaceState({}, "", url);
+  });
+
+  btnRight.addEventListener("click", () => {
+    img.src = IMGS.creatividad;
+    const url = new URL(window.location);
+    url.searchParams.set("opt", "creatividad");
+    window.history.replaceState({}, "", url);
+  });
+
+  // Volver: vuelve a la pantalla de elegir (fondo + emojis)
+  back.addEventListener("click", () => {
+    img.src = IMGS.home;
+    const url = new URL(window.location);
+    url.searchParams.delete("opt");
+    window.history.replaceState({}, "", url);
+  });
+
+  // Inicio: vuelve a portada
+  home.addEventListener("click", () => {
+    showCover();
+  });
+
+  // Links directos
+  const opt = new URLSearchParams(window.location.search).get("opt");
+  if (opt === "adrenalina") {
+    cover.style.display = "none";
+    stage.style.display = "block";
+    toolbar.style.display = "flex";
+    subhint.style.display = "block";
+    img.src = IMGS.adrenalina;
+  } else if (opt === "creatividad") {
+    cover.style.display = "none";
+    stage.style.display = "block";
+    toolbar.style.display = "flex";
+    subhint.style.display = "block";
+    img.src = IMGS.creatividad;
+  } else {
+    showCover();
+  }
+});
+</script>
+
+</body>
+</html>
