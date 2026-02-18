@@ -132,6 +132,9 @@ body{
 }
 
 .subhint{display:none;margin-top:10px;font-size:14px;opacity:.7}
+
+/* Ocultar overlay (emojis + texto) */
+.hidden{display:none !important;}
 </style>
 </head>
 
@@ -192,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const toolbar = document.getElementById("toolbar");
   const subhint = document.getElementById("subhint");
   const img     = document.getElementById("img");
+  const overlay = document.getElementById("overlay");
 
   const openGift = document.getElementById("openGift");
   const btnLeft  = document.getElementById("btnLeft");
@@ -204,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stage.style.display = "none";
     toolbar.style.display = "none";
     subhint.style.display = "none";
-    // Limpia parámetro
+
     const url = new URL(window.location);
     url.searchParams.delete("opt");
     window.history.replaceState({}, "", url);
@@ -216,6 +220,9 @@ document.addEventListener("DOMContentLoaded", () => {
     toolbar.style.display = "flex";
     subhint.style.display = "block";
     img.src = IMGS.home;
+
+    // En la pantalla de elegir, overlay visible
+    overlay.classList.remove("hidden");
   }
 
   // Portada -> selector
@@ -223,9 +230,11 @@ document.addEventListener("DOMContentLoaded", () => {
     showSelector();
   });
 
-  // Elegir
+  // Elegir (ocultamos overlay)
   btnLeft.addEventListener("click", () => {
     img.src = IMGS.adrenalina;
+    overlay.classList.add("hidden");
+
     const url = new URL(window.location);
     url.searchParams.set("opt", "adrenalina");
     window.history.replaceState({}, "", url);
@@ -233,6 +242,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btnRight.addEventListener("click", () => {
     img.src = IMGS.creatividad;
+    overlay.classList.add("hidden");
+
     const url = new URL(window.location);
     url.searchParams.set("opt", "creatividad");
     window.history.replaceState({}, "", url);
@@ -241,6 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Volver: vuelve a la pantalla de elegir (fondo + emojis)
   back.addEventListener("click", () => {
     img.src = IMGS.home;
+    overlay.classList.remove("hidden");
+
     const url = new URL(window.location);
     url.searchParams.delete("opt");
     window.history.replaceState({}, "", url);
@@ -259,12 +272,14 @@ document.addEventListener("DOMContentLoaded", () => {
     toolbar.style.display = "flex";
     subhint.style.display = "block";
     img.src = IMGS.adrenalina;
+    overlay.classList.add("hidden");
   } else if (opt === "creatividad") {
     cover.style.display = "none";
     stage.style.display = "block";
     toolbar.style.display = "flex";
     subhint.style.display = "block";
     img.src = IMGS.creatividad;
+    overlay.classList.add("hidden");
   } else {
     showCover();
   }
@@ -273,3 +288,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
+
