@@ -1,257 +1,184 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Elige: Adrenalina o Creatividad</title>
-  <style>
-    :root {
-      --radius: 18px;
-      --shadow: 0 10px 35px rgba(0,0,0,.18);
-      --glass: rgba(255,255,255,.86);
-      --glass2: rgba(255,255,255,.72);
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Elige: Adrenalina o Creatividad</title>
 
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #f4f5f7; }
-    .wrap { max-width: 980px; margin: 22px auto; padding: 0 14px; }
+<style>
+:root{
+  --radius:18px;
+  --shadow:0 10px 35px rgba(0,0,0,.18);
+  --glass:rgba(255,255,255,.86);
+  --glass2:rgba(255,255,255,.72);
+}
 
-    .stage {
-      position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      background: #000;
-    }
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  margin:0;
+  background:#f4f5f7;
+}
 
-    .stage img {
-      width: 100%;
-      height: auto;
-      display: block;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
+.wrap{max-width:980px;margin:22px auto;padding:0 14px}
 
-    /* Capa superior con botones + texto */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      grid-template-columns: 1fr minmax(220px, 420px) 1fr;
-      align-items: center;
-      padding: 14px;
-      gap: 10px;
-      pointer-events: none; /* para que solo los botones reciban clicks */
-    }
+/* -------- PORTADA -------- */
+.cover{display:block}
+.coverCard{
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  background:white;
+  padding:24px;
+  display:grid;
+  gap:18px;
+  justify-items:center;
+  text-align:center;
+}
+.coverImg{
+  width:min(520px,100%);
+  border-radius:16px;
+}
+.coverTitle{
+  font-weight:900;
+  font-size:clamp(28px,5vw,48px);
+}
+.coverText{
+  max-width:760px;
+  font-size:clamp(14px,2vw,17px);
+  opacity:.85;
+}
+.coverBtn{
+  border:0;
+  cursor:pointer;
+  border-radius:14px;
+  padding:14px 20px;
+  font-weight:800;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  background:#111;
+  color:#fff;
+}
+.coverBtn:active{transform:scale(.98)}
 
-    .centerCard {
-      pointer-events: none;
-      text-align: center;
-      background: linear-gradient(180deg, var(--glass), var(--glass2));
-      border: 1px solid rgba(255,255,255,.55);
-      border-radius: 999px;
-      padding: 14px 16px;
-      backdrop-filter: blur(6px);
-    }
-    .centerCard .t1 { font-weight: 750; font-size: clamp(16px, 2.4vw, 22px); }
-    .centerCard .t2 { margin-top: 4px; font-weight: 650; opacity: .85; font-size: clamp(14px, 2.1vw, 18px); }
+/* -------- SELECTOR -------- */
 
-    .emojiBtn {
-      pointer-events: auto;
-      justify-self: start;
-      border: 0;
-      cursor: pointer;
-      background: rgba(255,255,255,.88);
-      border-radius: 999px;
-      width: clamp(62px, 9vw, 92px);
-      height: clamp(62px, 9vw, 92px);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-      transition: transform .08s ease, background .2s ease;
-      font-size: clamp(30px, 5vw, 52px);
-      line-height: 1;
-    }
-    .emojiBtn:hover { background: rgba(255,255,255,.95); }
-    .emojiBtn:active { transform: scale(0.97); }
+.stage{
+  position:relative;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  background:#000;
+  display:none; /* oculto al inicio */
+}
 
-    .emojiBtn.right { justify-self: end; }
+.stage img{
+  width:100%;
+  display:block;
+}
 
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    .toolbar button {
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      background: white;
-      cursor: pointer;
-    }
+.overlay{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:1fr minmax(220px,420px) 1fr;
+  align-items:center;
+  padding:14px;
+  gap:10px;
+  pointer-events:none;
+}
 
-    .subhint { margin-top: 10px; opacity: .75; font-size: 14px; }
+.centerCard{
+  pointer-events:none;
+  text-align:center;
+  background:linear-gradient(180deg,var(--glass),var(--glass2));
+  border-radius:999px;
+  padding:14px 16px;
+}
 
-    /* Cuando estamos viendo una imagen final, ocultamos overlay */
-    .hidden { display: none !important; }
-        /* PORTADA */
-    .cover {
-      display: block;
-      margin-bottom: 14px;
-    }
-    .coverCard{
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      background: white;
-      overflow: hidden;
-      padding: 18px;
-      display: grid;
-      gap: 14px;
-      justify-items: center;
-      text-align: center;
-    }
-    .coverImg{
-      width: min(520px, 100%);
-      height: auto;
-      border-radius: 16px;
-      display: block;
-    }
-    .coverTitle{
-      font-weight: 900;
-      letter-spacing: .5px;
-      font-size: clamp(26px, 4.5vw, 44px);
-      line-height: 1.05;
-    }
-    .coverText{
-      max-width: 780px;
-      font-size: clamp(13px, 2vw, 16px);
-      opacity: .85;
-    }
-    .coverBtn{
-      border: 0;
-      cursor: pointer;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-weight: 750;
-      box-shadow: 0 10px 25px rgba(0,0,0,.12);
-      background: #111;
-      color: #fff;
-    }
-    .coverBtn:active{ transform: scale(.99); }
+.centerCard .t1{font-weight:750;font-size:clamp(16px,2.4vw,22px)}
+.centerCard .t2{margin-top:4px;font-weight:650;font-size:clamp(14px,2vw,18px)}
 
-  </style>
+.emojiBtn{
+  pointer-events:auto;
+  border:0;
+  cursor:pointer;
+  background:rgba(255,255,255,.9);
+  border-radius:999px;
+  width:clamp(62px,9vw,92px);
+  height:clamp(62px,9vw,92px);
+  display:grid;
+  place-items:center;
+  font-size:clamp(30px,5vw,52px);
+}
+.emojiBtn.right{justify-self:end}
+
+.toolbar{
+  display:none; /* oculto al inicio */
+  gap:10px;
+  margin-top:12px;
+}
+.toolbar button{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:white;
+  cursor:pointer;
+}
+
+.subhint{display:none;margin-top:10px;font-size:14px;opacity:.7}
+.hidden{display:none!important}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-      <!-- PORTADA -->
-  <div id="cover" class="cover">
-    <div class="coverCard">
-      <img class="coverImg" src="portada.png" alt="Regalo" />
-      <div class="coverTitle">FELIZ CUMPLEAÑOS SHEILA!!</div>
-      <div class="coverText">
-        Te iubesc mucho, ya van 25 años! Que rápido pasa el tiempo, ya hace unos años que nos conocemos y ya hace que estamos juntos. Me haces muy feliz&lt;3
-      </div>
-      <button id="openGift" class="coverBtn" type="button">Abrir regalo 🎁</button>
+<div class="wrap">
+
+<!-- PORTADA -->
+<div id="cover" class="cover">
+  <div class="coverCard">
+    <img class="coverImg" src="portada.png" alt="Regalo">
+    <div class="coverTitle">FELIZ CUMPLEAÑOS SHEILA!!</div>
+    <div class="coverText">
+      Te iubesc mucho, ya van 25 años! Que rápido pasa el tiempo,
+      ya hace unos años que nos conocemos y ya hace que estamos juntos.
+      Me haces muy feliz&lt;3
     </div>
+    <button id="openGift" class="coverBtn">Abrir regalo 🎁</button>
   </div>
+</div>
 
-    <div class="stage">
-      <img id="img" src="fondo.png" alt="Selector">
+<!-- SELECTOR -->
+<div id="stage" class="stage">
+  <img id="img" src="fondo.png" alt="Selector">
+  <div id="overlay" class="overlay">
+    <button id="btnLeft" class="emojiBtn">💪🏻</button>
 
-      <div id="overlay" class="overlay">
-        <button id="btnLeft" class="emojiBtn left" aria-label="Elegir Adrenalina">💪🏻</button>
-
-        <div class="centerCard" aria-hidden="true">
-          <div class="t1">Elige qué opción quieres</div>
-          <div class="t2">Adrenalina o Creatividad</div>
-        </div>
-
-        <button id="btnRight" class="emojiBtn right" aria-label="Elegir Creatividad">🧠</button>
-      </div>
+    <div class="centerCard">
+      <div class="t1">Elige qué opción quieres</div>
+      <div class="t2">Adrenalina o Creatividad</div>
     </div>
 
-    <div class="toolbar">
-      <button id="back" type="button">Volver</button>
-      <button id="home" type="button">Inicio</button>
-    </div>
-
-    <div class="subhint">
-      Puedes compartir links directos:
-      <code>?opt=adrenalina</code> o <code>?opt=creatividad</code>
-    </div>
+    <button id="btnRight" class="emojiBtn right">🧠</button>
   </div>
+</div>
 
-  <script>
-    const IMGS = {
-      home: "fondo.png",
-      adrenalina: "adrenalina.webp",
-      creatividad: "creatividad.jpg"
-    };
+<div id="toolbar" class="toolbar">
+  <button id="home">Inicio</button>
+</div>
 
-    const img = document.getElementById("img");
-    const overlay = document.getElementById("overlay");
-    const cover = document.getElementById("cover");
-    const openGift = document.getElementById("openGift");
+<div id="subhint" class="subhint">
+  Puedes compartir: ?opt=adrenalina o ?opt=creatividad
+</div>
 
-    const history = [];
-    
+</div>
 
-    function setOverlayVisible(visible) {
-      overlay.classList.toggle("hidden", !visible);
-    }
+<script>
+const IMGS={
+  home:"fondo.png",
+  adrenalina:"adrenalina.webp",
+  creatividad:"creatividad.jpg"
+};
 
-    function go(key) {
-      history.push({ src: img.src, overlayVisible: !overlay.classList.contains("hidden") });
-      img.src = IMGS[key];
-      setOverlayVisible(key === "home"); // overlay solo en inicio
-      // deja la opción en la URL para compartir
-      const url = new URL(window.location);
-      if (key === "home") url.searchParams.delete("opt");
-      else url.searchParams.set("opt", key);
-      window.history.replaceState({}, "", url);
-    }
+const cover=document.getElementById("cover");
+const stage=document.getElementById("stage
 
-    document.getElementById("btnLeft").addEventListener("click", () => go("adrenalina"));
-    document.getElementById("btnRight").addEventListener("click", () => go("creatividad"));
-
-    document.getElementById("back").addEventListener("click", () => {
-      const prev = history.pop();
-      if (!prev) return;
-      img.src = prev.src;
-      setOverlayVisible(prev.overlayVisible);
-    });
-
-    document.getElementById("home").addEventListener("click", () => {
-      history.length = 0;
-      go("home");
-    });
-function showCover(show) {
-  cover.style.display = show ? "block" : "none";
-}
-
-// al abrir el regalo, ocultamos portada y mostramos la pantalla de elección
-openGift.addEventListener("click", () => {
-  showCover(false);
-  img.src = IMGS.home;
-  setOverlayVisible(true);
-  const url = new URL(window.location);
-  url.searchParams.delete("opt");
-  window.history.replaceState({}, "", url);
-});
-
-    // Abrir directo con ?opt=adrenalina o ?opt=creatividad
-    const opt = new URLSearchParams(window.location.search).get("opt");
-    if (opt === "adrenalina" || opt === "creatividad") {
-  showCover(false);
-  img.src = IMGS[opt];
-  setOverlayVisible(false);
-} else {
-  showCover(true);          // mostramos portada
-  setOverlayVisible(false); // ocultamos emojis hasta que pulse "Abrir regalo"
-}
-
-  </script>
-</body>
-</html>
 
 
